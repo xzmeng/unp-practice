@@ -1,14 +1,30 @@
 #include "lib.h"
 #include <ctype.h>
+#include <signal.h>
+#include <wait.h>
 
-void handle(int connfd){
-    char buf[100];
+void upper(char *, int);
+void sig_chld_handler();
+
+void handler(int connfd){
     int n;
-
-    while((n = Read(connfd, buf, 99) > 0)){
-        Write(connfd, buf, n);
+    char buf[100];
+    while((n = Read(connfd, buf, 100)) != 0){
+            buf[n] = '\0';
+            printf("send:%s\n", buf);
+            upper(buf, n);
+            Write(connfd, buf, n);
     }
+    printf("handler exit\n");
     exit(0);
+}
+
+void sigchld_handler(int signum){
+    pid_t pid;
+    int stat;
+    pid = wait(&stat);
+    printf("child %d terminated\n", pid);
+    return ;
 }
 
 void upper(char *buf, int size){
@@ -33,13 +49,14 @@ int main(){
 
     Listen(listenfd);
 
+    signal(SIGCHLD, sigchld_handler);
+
     while(connfd = Accept(listenfd)){
-        while((n = Read(connfd, buf, 100)) != 0){
-            buf[n] = '\0';
-            printf("send:%s\n", buf);
-            upper(buf, n);
-            Write(connfd, buf, n);
+        if(( pid = fork() ) == 0){
+            Close(listenfd);
+            handler(connfd);
         }
+        Close(connfd);
     }
 
     return 0;
