@@ -1,7 +1,7 @@
 objs = timecli1.o timeserv1.o get_time.o lib.o \
-	echoserv.o echocli.o
+	echoserv.o echocli.o echocliclose.o
 
-all: s1 c1 echoserv echocli
+all: s1 c1 echoserv echocli echocliclose
 
 $(objs): %.o: %.c
 	gcc -g -c $< -o $@
@@ -19,6 +19,9 @@ echoserv: echoserv.o lib.o lib.h
 
 echocli: echocli.o lib.o lib.h
 	gcc -g -o echocli echocli.o lib.o
+
+echocliclose: echocliclose.o lib.o lib.h
+	gcc -g -o echocliclose echocliclose.o lib.o
 
 clean:
 	rm s1 c1 *.o echocli echoserv
