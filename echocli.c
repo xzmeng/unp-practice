@@ -3,6 +3,7 @@
 int main(){
     int sockfd;
     struct sockaddr_in servaddr;
+    int n;
 
     sockfd = Socket();
     
@@ -12,10 +13,13 @@ int main(){
     Connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
     char buf[100];
-    bzero(buf, 100);
-    int n;
-    while( (n = Read(sockfd, buf, 100)) > 0){
-        fputs(buf, stdout);
+    while(1){
+        fgets(buf, 100, stdin);
+        n = strlen(buf);
+        Write(sockfd, buf, n - 1);
+        Read(sockfd, buf, n - 1);
+        buf[n - 1] = '\0';
+        printf("%s\n", buf);
     }
 
     return 0;

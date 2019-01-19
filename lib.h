@@ -11,6 +11,7 @@
 #include <strings.h>
 #include <string.h>
 
+int Socket();
 
 void Bind(int sockfd, struct sockaddr *addr, socklen_t addrlen);
 
@@ -19,6 +20,8 @@ void Listen(int sockfd);
 int Accept(int sockfd);
 
 void Write(int sockfd, char *buf, int size);
+
+int Read(int sockfd, char *buf, int size);
 
 void Close(int sockfd);
 
